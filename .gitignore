@@ -2,6 +2,8 @@
 node_modules
 /dist
 
+bin
+obj
 
 # local env files
 .env.local
@@ -16,6 +18,7 @@ pnpm-debug.log*
 # Editor directories and files
 .idea
 .vscode
+.vs
 *.suo
 *.ntvs*
 *.njsproj

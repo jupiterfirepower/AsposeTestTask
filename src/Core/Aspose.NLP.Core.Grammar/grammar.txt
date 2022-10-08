@@ -6,3 +6,8 @@ are
 above
 is
 in
+on
+of
+for
+with
+or

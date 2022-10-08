@@ -21,8 +21,10 @@ type WordSummaryController (logger : ILogger<WordSummaryController>) =
     [<HttpGet>]
     member _.Get([<FromState(StoreNames.WordsSummaryStoreName)>]state:StateEntry<WebSummaryState>): WordItemSummary[] =
         logger.LogInformation($"Word Summary get result")
-        let result = state.Value.Data |> Seq.map(fun (word, count, per, n) -> let ws = new WordItemSummary(word,"" + (sprintf "%d" count) + (sprintf "%f" per), n)
-                                                                              ws)
+
+        let result = state.Value.Data 
+                     |> Seq.map(fun (word, count, per, n) -> let ws = new WordItemSummary(word, count.ToString() + " " + "(" + (sprintf "%.2f" per) + "%)", n)
+                                                             ws)
            
         result |> Seq.toArray
 
@@ -32,11 +34,15 @@ type WordSummaryController (logger : ILogger<WordSummaryController>) =
         let mutable result: seq<_> = Seq.empty
         task {
             let! state = daprClient.GetStateEntryAsync<WebSummaryState>(StoreNames.WordsSummaryStoreName, corellationId)
-            result <- state.Value.Data |> Seq.filter (fun (word, count, per, n) -> word.Length <> 0)// && count > 0)
-            |> Seq.map(fun (word, count, per, n) -> if count = 0 then (word, count + 1, per, n) else (word, count, per, n))
-            |> Seq.sortBy (fun (word, count, per, n) -> -count)
-            |> Seq.map(fun (word, count, per, n) -> let ws = new WordItemSummary(word,"" + count.ToString() + " " + "(" + per.ToString() + "%)", n)
-                                                    ws)
+            let inline notNull value = not (obj.ReferenceEquals(value, null))
+
+            if notNull state.Value then
+
+               result <- state.Value.Data |> Seq.filter (fun (word, count, per, n) -> word.Length <> 0)
+               |> Seq.map(fun (word, count, per, n) -> if count = 0 then (word, count + 1, per, n) else (word, count, per, n))
+               |> Seq.sortBy (fun (word, count, per, n) -> -count)
+               |> Seq.map(fun (word, count, per, n) -> let ws = new WordItemSummary(word, count.ToString() + " " + "(" + (sprintf "%.2f" per) + "%)", n)
+                                                       ws)
         }
         |> Async.AwaitTask
         |> Async.RunSynchronously
@@ -47,8 +53,6 @@ type WordSummaryController (logger : ILogger<WordSummaryController>) =
     [<HttpPost>]
     member _.WordSummary(input : WebUriData, [<FromServices>] daprClient : DaprClient) =
         logger.LogInformation($"Text Word Summary Processing Url - {input.Url}")
-
-        System.IO.File.WriteAllText(@"C:\Temp\1.txt", input.Data);
 
         let text = input.Data
 
@@ -88,7 +92,7 @@ type WordSummaryController (logger : ILogger<WordSummaryController>) =
             let count = result_tmp.Count()
             logger.LogInformation($"Text Word Summary Processing phrasegen_count({n}). Phrase count - {count}")
 
-            let result_n = result_tmp |> Seq.map (fun (w, c) -> (w, c , Math.Round((float c)/(float count), 2), n))
+            let result_n = result_tmp |> Seq.map (fun (w, c) -> (w, c , (float c)/(float count), n))
             result_n |> Seq.iter (fun r -> hset_result.Add(r) |> ignore)
 
         task {

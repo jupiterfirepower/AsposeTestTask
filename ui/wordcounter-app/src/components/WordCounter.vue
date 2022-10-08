@@ -62,10 +62,10 @@
                     <template v-slot:default>
                       <tbody>
                         <tr
-                          v-for="item in (data.words as WordCount[]).filter((w)=>w.nWords===itemt.content).slice(0, data.topn)"
-                          :key="item.word"
+                          v-for="(item, index) in (data.words as WordCount[]).filter((w)=>w.nWords===itemt.content).slice(0, data.topn)"
+                          :key="index"
                         >
-                          <td>{{ item.word }}</td>
+                          <td>{{ index + 1 + ". " + item.word }}</td>
                           <td>&nbsp;</td>
                           <td>&nbsp;</td>
                           <td>{{ item.summary }}</td>

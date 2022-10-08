@@ -151,13 +151,13 @@ module Core =
         sw.Stop()
         System.Console.WriteLine("Words gen Time elapsed: {0}", sw.Elapsed)
 
-        sw.Restart()
-
-        sw.Restart()
         let helper = new TextWordCounterHelper();
-        let cdictr = helper.FastWordOcurrensiesInSentensesCounter(sentenses, words.Distinct().ToArray())
-        sw.Stop()
-        System.Console.WriteLine("WordCounterTextHelper.FastWordOcurrensiesInSentensesCounter Time elapsed: {0} {1}", sw.Elapsed, cdictr.Values.Count)
+
+        //sw.Restart()
+        //
+        //let cdictr = helper.FastWordOcurrensiesInSentensesCounter(sentenses, words.Distinct().ToArray())
+        //sw.Stop()
+        //System.Console.WriteLine("WordCounterTextHelper.FastWordOcurrensiesInSentensesCounter Time elapsed: {0} {1}", sw.Elapsed, cdictr.Values.Count)
 
         sw.Restart()
 

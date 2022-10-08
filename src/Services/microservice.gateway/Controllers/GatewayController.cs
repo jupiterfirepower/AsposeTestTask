@@ -5,54 +5,82 @@ using Microsoft.IdentityModel.Tokens;
 using Aspose.NLP.Core.Grammar;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
+using Aspose.NLP.Core.Helpers;
+using System.Net.Mime;
 
-namespace microservice.gateway.Controllers
+namespace microservice.gateway.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+//[Consumes(MediaTypeNames.Application.Json)]
+[Produces(MediaTypeNames.Application.Json)]
+public class GatewayController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    [Produces("application/json")]
-    public class GatewayController : ControllerBase
+    private readonly ILogger<GatewayController> _logger;
+    private readonly ServicesOptions _serviceOptions;
+
+    private const char endUrlTrimChar = '/';
+
+    public GatewayController(ILogger<GatewayController> logger, IOptionsMonitor<ServicesOptions> serviceOptions)
     {
-        private readonly ILogger<GatewayController> _logger;
-        private readonly ServicesOptions _serviceOptions;
-        private const char endUrlTrimChar = '/';
+        _logger = logger;
+        _serviceOptions = serviceOptions.CurrentValue;
+    }
 
-        public GatewayController(ILogger<GatewayController> logger, IOptionsMonitor<ServicesOptions> serviceOptions)
+    [HttpGet("{corellationId}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<WordItemSummary>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<WordItemSummary>>> GetAsync([Required] string corellationId, [FromQuery] bool excludedGrammar = false)
+    {
+        _logger.LogInformation($"{nameof(GetAsync)} corellationId: {corellationId}");
+
+        var isValid = GuidHelper.IsGuid(corellationId);
+
+        if (!isValid)
+            return BadRequest();
+
+        var helper = new ExcludeGrammarHelper();
+
+        using var client = new HttpClient();
+
+        var url = _serviceOptions.WordSummaryUrl.TrimEnd(endUrlTrimChar);
+        var emptyList = new List<WordItemSummary>();
+
+        try
         {
-            _logger = logger;
-            _serviceOptions = serviceOptions.CurrentValue;
-        }
-
-        [HttpGet("{corellationId}")]
-        public async Task<IEnumerable<WordItemSummary>> GetAsync([Required] string corellationId, [FromQuery] bool excludedGrammar = false)
-        {
-            _logger.LogInformation($"{nameof(GetAsync)} corellationId: {corellationId}");
-
-            var helper = new ExcludeGrammarHelper();
-
-            using var client = new HttpClient();
-
-            var url = _serviceOptions.WordSummaryUrl.TrimEnd(endUrlTrimChar);
-
             var response = await client.GetFromJsonAsync<IEnumerable<WordItemSummary>>($"{url}/{corellationId}");
-            var emptyList = new List<WordItemSummary>();
 
-            return excludedGrammar ? await helper.ExcludeGrammarWords(response ?? emptyList) : response ?? emptyList;
+            if(response != null && response.Count() == 0)
+                return NotFound();
+
+            return Ok(excludedGrammar ? await helper.ExcludeGrammarWords(response) : response);
         }
-
-        [HttpPost]
-        public async Task<Guid> ProcessingUrlAsync([FromBody]string url)
+        catch
         {
-            _logger.LogInformation($"{nameof(ProcessingUrlAsync)} url: {url}");
-
-            using var client = new HttpClient();
-            var serviceUrl = _serviceOptions.WebDownloaderUrl.TrimEnd(endUrlTrimChar);
-
-            var response = await client.PostAsJsonAsync(serviceUrl, Base64UrlEncoder.Encode(url));
-            response.EnsureSuccessStatusCode();
-            var corellationId = await response.Content.ReadAsAsync<Guid>();
-
-            return corellationId;
+            return NotFound();
         }
+    }
+
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Guid>> ProcessingUrlAsync([FromBody] [Required] string url)
+    {
+        _logger.LogInformation($"{nameof(ProcessingUrlAsync)} url: {url}");
+
+        var isValid = UriHelper.IsUrlValid(url);
+
+        if (!isValid)
+            return BadRequest();
+
+        using var client = new HttpClient();
+        var serviceUrl = _serviceOptions.WebDownloaderUrl.TrimEnd(endUrlTrimChar);
+
+        var response = await client.PostAsJsonAsync(serviceUrl, Base64UrlEncoder.Encode(url));
+        response.EnsureSuccessStatusCode();
+        var corellationId = await response.Content.ReadAsAsync<Guid>();
+
+        return Ok(corellationId);
     }
 }
