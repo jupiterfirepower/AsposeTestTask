@@ -2,11 +2,11 @@ version: '3.8'
 
 services:
 # Zipkin
-#  zipkin:
-#    container_name: zipkin
-#    image: openzipkin/zipkin
-#    ports:
-#      - 9411:9411
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
 
 # RabbitMQ
   rabbitmq:
@@ -17,32 +17,32 @@ services:
             - 15672:15672
         restart: always
 
-#  db:
-#    container_name: cosmosdb
-#    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
-#    tty: true
-#    restart: always
-#    mem_limit: 3G
-#    cpu_count: 2
-#    environment:
-#      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
-#      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
-#    ports:
-#       - "8081:8081"
-#       - "8900:8900"
-#       - "8901:8901"
-#       - "8979:8979"
-#       - "10250:10250"
-#       - "10251:10251"
-#       - "10252:10252"
-#       - "10253:10253"
-#       - "10254:10254"
-#       - "10255:10255"
-#       - "10256:10256"
-#       - "10350:10350"
-#    volumes:
-#       - vol_cosmos:/data/db
-#volumes: 
-#  vol_cosmos:
+  db:
+    container_name: cosmosdb
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    tty: true
+    restart: always
+    mem_limit: 3G
+    cpu_count: 2
+    environment:
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+    ports:
+       - "8081:8081"
+       - "8900:8900"
+       - "8901:8901"
+       - "8979:8979"
+       - "10250:10250"
+       - "10251:10251"
+       - "10252:10252"
+       - "10253:10253"
+       - "10254:10254"
+       - "10255:10255"
+       - "10256:10256"
+       - "10350:10350"
+    volumes:
+       - vol_cosmos:/data/db
+volumes: 
+  vol_cosmos:
 
 

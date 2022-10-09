@@ -88,6 +88,7 @@ import { defineComponent } from "vue";
 import { reactive, onMounted } from "vue";
 import { getWordsSummary } from "../Words.api";
 import store from "../store";
+import * as signalR from "@microsoft/signalr";
 
 export default defineComponent({
   name: "WordCounterApp",
@@ -123,12 +124,12 @@ export default defineComponent({
         "getRecords corellationId -" + store.state.wordCountState.corellationId
       );
       console.log("getRecords excludeGrammar -" + store.getters.excludeGrammar);
-      let resData = await getWordsSummary(
-        store.getters.corellationId,
-        store.getters.excludeGrammar
-      );
-      data.words = resData as never[];
-      data.switch1 = store.getters.excludeGrammar;
+      getWordsSummary(store.getters.corellationId, store.getters.excludeGrammar)
+        .then((datares) => {
+          data.words = datares as never[];
+          data.switch1 = store.getters.excludeGrammar;
+        })
+        .catch((err: Error) => console.log(err));
     };
 
     const handleChange = (evt: Event) => {
@@ -151,6 +152,43 @@ export default defineComponent({
         { tab: "3 Words", content: 3 },
       ],
     };
+  },
+  created() {
+    const hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl("http://localhost:5241/notifications-event-hub")
+      .configureLogging(signalR.LogLevel.Information)
+      .withAutomaticReconnect()
+      .build();
+    store.commit("changeHubConnection", hubConnection);
+
+    // Starts the SignalR connection
+    hubConnection.start().then((a) => {
+      // Once started, invokes the sendConnectionId in our ChatHub inside our ASP.NET Core application.
+      //if (hubConnection.connectionId) {
+      //  hubConnection.invoke("sendConnectionId", hubConnection.connectionId);
+      //}
+      console.info("Connected.");
+    });
+
+    interface INotification {
+      corellationId: string;
+      created: string;
+    }
+
+    let counter = 0;
+
+    hubConnection.on("nscevents", (message) => {
+      console.info("hubConnection recived message : " + message);
+      var notif: INotification = JSON.parse(message);
+      console.info(
+        "hubConnection recived corellationId : " + notif.corellationId
+      );
+      console.info("hubConnection counter++ : " + counter++);
+      hubConnection.stop();
+      if (store.getters.corellationId === notif.corellationId) {
+        this.$emit("changeExludeGrammar", counter++);
+      }
+    });
   },
 });
 </script>

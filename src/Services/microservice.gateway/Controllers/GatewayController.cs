@@ -7,6 +7,8 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 using Aspose.NLP.Core.Helpers;
 using System.Net.Mime;
+using microservice.common;
+using Newtonsoft.Json;
 
 namespace microservice.gateway.Controllers;
 
@@ -18,13 +20,15 @@ public class GatewayController : ControllerBase
 {
     private readonly ILogger<GatewayController> _logger;
     private readonly ServicesOptions _serviceOptions;
+    private readonly INotificationHub _notifService;
 
     private const char endUrlTrimChar = '/';
 
-    public GatewayController(ILogger<GatewayController> logger, IOptionsMonitor<ServicesOptions> serviceOptions)
+    public GatewayController(ILogger<GatewayController> logger, IOptionsMonitor<ServicesOptions> serviceOptions, INotificationHub notificationHub)
     {
         _logger = logger;
         _serviceOptions = serviceOptions.CurrentValue;
+        _notifService = notificationHub;
     }
 
     [HttpGet("{corellationId}")]
@@ -62,6 +66,19 @@ public class GatewayController : ControllerBase
         }
     }
 
+    [HttpPost("sendnotif")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    public async Task<ActionResult<string>> SendNotification(Notification notif)
+    {
+        _logger.LogInformation($"{nameof(SendNotification)} CorellationId - {notif.CorellationId}");
+
+        CancellationToken token = new CancellationTokenSource().Token;
+
+        await _notifService.PushDataAsync(notif, token);
+
+        return Ok(notif.CorellationId);
+    }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -80,6 +97,9 @@ public class GatewayController : ControllerBase
         var response = await client.PostAsJsonAsync(serviceUrl, Base64UrlEncoder.Encode(url));
         response.EnsureSuccessStatusCode();
         var corellationId = await response.Content.ReadAsAsync<Guid>();
+
+
+        _logger.LogInformation($" url : {url} , corellationId - {corellationId}");
 
         return Ok(corellationId);
     }

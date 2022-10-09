@@ -1,8 +1,11 @@
 using Google.Api;
-using Google.Protobuf.Reflection;
+using microservice.common;
+using microservice.core;
 using microservice.gateway;
+using microservice.gateway.Services;
+using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,10 +23,13 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: myAllowSpecificOrigins,
                       policy =>
                       {
-                          policy//.WithOrigins("http://localhost:8081", "http://www.contoso.com")
-                          .AllowAnyOrigin()
+                          policy//.WithOrigins("http://localhost:8080")
                           .AllowAnyHeader()
-                          .AllowAnyMethod(); 
+                          .AllowAnyMethod()
+                          .AllowAnyOrigin()
+                          .AllowCredentials()
+                          .WithOrigins("http://localhost:8080");
+                          //.WithOrigins("*");
                       });
 });
 
@@ -37,7 +43,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddOptions<ServicesOptions>().Bind(builder.Configuration.GetSection("Services"));
-//builder.Services.AddOptions<ServicesOptions>().Bind(builder.Configuration.Get<ServicesOptions>());
+
+builder.Services.AddSignalR(hubOptions =>
+{
+    hubOptions.EnableDetailedErrors = true;
+})
+.AddJsonProtocol(options => {
+        options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+})
+.AddNewtonsoftJsonProtocol();
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
+//builder.Services.AddSingleton<IUserIdProvider, CustomSignalRUserIdProvider>();
+builder.Services.AddSingleton<INotificationHub, NotificationService>();
+
 
 var app = builder.Build();
 
@@ -45,7 +66,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 //app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseCors(myAllowSpecificOrigins);
 
 app.UseCloudEvents();
@@ -53,5 +74,16 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapSubscribeHandler();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<NotificationHub>("/notifications-event-hub", options =>
+    {
+        options.Transports = HttpTransportType.ServerSentEvents;
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller}/{action=Index}/{id?}");
+    });
+});
 
 app.Run();

@@ -15,4 +15,5 @@ public class Topics
 
     public const string WebUrlDataTopicName = "OnUri_Submitted";
     public const string WebTextDataTopicName = "OnText_Submitted";
+    public const string WebUrlResultTopicName = "OnUriProcessing_Result";
 }

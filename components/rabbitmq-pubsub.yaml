@@ -22,3 +22,4 @@ scopes:
   - webdownloader-service
   - htmlparser-service
   - wordcounter-service
+  - gateway-service

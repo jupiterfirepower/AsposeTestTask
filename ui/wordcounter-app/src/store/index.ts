@@ -7,6 +7,8 @@ export default createStore({
       data: [],
       topn: 5,
       excludeGrammar: false,
+      hubConnection: null,
+      setupContext: null,
     },
   },
   getters: {
@@ -22,6 +24,12 @@ export default createStore({
     excludeGrammar: (state) => {
       return state.wordCountState.excludeGrammar;
     },
+    hubConnection: (state) => {
+      return state.wordCountState.hubConnection;
+    },
+    setupContext: (state) => {
+      return state.wordCountState.setupContext;
+    },
   },
   mutations: {
     changeCorellationId(state, guid) {
@@ -35,6 +43,14 @@ export default createStore({
     changeExcludeGrammar(state, excludeGrammar) {
       state.wordCountState.excludeGrammar = excludeGrammar;
       console.info("changeExcludeGrammar excludeGrammar - " + excludeGrammar);
+    },
+    changeHubConnection(state, hub) {
+      state.wordCountState.hubConnection = hub;
+      //console.info("changeHubConnection excludeGrammar - " + excludeGrammar);
+    },
+    changeSetupContext(state, context) {
+      state.wordCountState.setupContext = context;
+      //console.info("changeHubConnection excludeGrammar - " + excludeGrammar);
     },
     UPDATE_WORD_ITEMS(state, payload) {
       state.wordCountState.data = payload;

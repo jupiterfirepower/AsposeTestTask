@@ -12,6 +12,7 @@ open System.Linq
 open System.Collections.Generic
 open microservice.wordcounterapi.data
 open Aspose.NLP.FSharp.Core
+open System.Net.Http
 
 [<ApiController>]
 [<Route("[controller]")>]
@@ -105,8 +106,21 @@ type WordSummaryController (logger : ILogger<WordSummaryController>) =
             do! state.SaveAsync()
 
             logger.LogInformation($"Text Word Summary Processing WebSummaryState saved with key - {state.Key}")
+
+            let notif = new Notification()
+            notif.CorellationId <- input.CorrelationId.ToString()
+            notif.Created <- DateTime.UtcNow
+
+            let client = new HttpClient()
+
+            let! g = client.PostAsJsonAsync("http://localhost:5241/Gateway/sendnotif", notif);
+            let! corellationId = g.Content.ReadAsAsync<string>();
+            logger.LogInformation((sprintf "Text Word Summary PostAsJsonAsync corellationId - %A" corellationId))
         }
         |> Async.AwaitTask
         |> Async.RunSynchronously
+
+       
+
         hset_result |> Seq.toArray
 

@@ -55,6 +55,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspose.NLP.Core.Tests", "sr
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BA46BE81-372F-4232-8FEF-545676241C45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "microservice.core", "src\Core\microservice.core\microservice.core.csproj", "{4FADC452-4697-4C80-8260-5D13B846B276}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,10 @@ Global
 		{BA46BE81-372F-4232-8FEF-545676241C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA46BE81-372F-4232-8FEF-545676241C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA46BE81-372F-4232-8FEF-545676241C45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FADC452-4697-4C80-8260-5D13B846B276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FADC452-4697-4C80-8260-5D13B846B276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FADC452-4697-4C80-8260-5D13B846B276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FADC452-4697-4C80-8260-5D13B846B276}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +131,7 @@ Global
 		{771B68A4-9633-463E-8BC4-837F8C9D5772} = {0C6B2598-EC99-4BE5-A6A7-446CA899FC2F}
 		{6AF1EC66-D822-41DD-BE7D-095FEEBF48E1} = {28D564CB-40E1-4CD0-BD0E-19673ADC2FAD}
 		{CB6A0172-804F-407A-BEE7-B9E05C385A52} = {BD999CD6-E7C0-4738-8F4E-C63535890393}
+		{4FADC452-4697-4C80-8260-5D13B846B276} = {61DB56A8-C452-4CB8-A0F4-ADC22E322890}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8E4DC2BB-5D0E-4A26-9CD6-643178ACB0EC}

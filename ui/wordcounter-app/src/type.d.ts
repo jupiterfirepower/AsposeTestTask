@@ -3,6 +3,11 @@ interface IWordCount {
   summary: string;
 }
 
+interface INotification {
+  corelationId: string;
+  created: string;
+}
+
 type WordCount = {
   word: string;
   summary: string;

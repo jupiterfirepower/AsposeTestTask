@@ -5,6 +5,10 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
 
+//import EventBus from "vue-bus-ts";
+
+//const bus = new EventBus.Bus();
+
 loadFonts();
 
 createApp(App).use(router).use(store).use(vuetify).mount("#app");

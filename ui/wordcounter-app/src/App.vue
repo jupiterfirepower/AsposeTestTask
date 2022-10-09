@@ -69,19 +69,6 @@ export default defineComponent({
           getCorellationId(url).then((res) => {
             store.commit("changeCorellationId", res);
             console.log("new corellationId:" + store.getters.corellationId);
-
-            setTimeout(() => {
-              getWordsSummary(
-                store.getters.corellationId,
-                store.getters.excludeGrammar
-              ).then((res) => {
-                store.commit("UPDATE_WORD_ITEMS", res);
-                console.log(
-                  "current corellationId:" + store.getters.corellationId
-                );
-              });
-              this.reloadUpdate();
-            }, 2000);
           });
         }
       }
@@ -91,6 +78,11 @@ export default defineComponent({
     loader() {
       const l = this.loader;
     },
+  },
+  created() {
+    //this.  bus.("my-event", (evt) => {
+    //  this.testEvent = evt.eventContent;
+    //});
   },
 });
 </script>
