@@ -89,6 +89,7 @@ import { reactive, onMounted } from "vue";
 import { getWordsSummary } from "../Words.api";
 import store from "../store";
 import * as signalR from "@microsoft/signalr";
+import axios from "axios";
 
 export default defineComponent({
   name: "WordCounterApp",
@@ -113,9 +114,13 @@ export default defineComponent({
       words: [],
       topn: store.getters.topn,
       switch1: store.getters.excludeGrammar,
+      ntabwords: store.getters.nTabWords,
     });
 
     onMounted(async () => {
+      axios.get("config.json").then((config) => {
+        store.commit("changeNTabWords", config.data.ntabwords);
+      });
       getRecords();
     });
 
@@ -154,40 +159,41 @@ export default defineComponent({
     };
   },
   created() {
-    const hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5241/notifications-event-hub")
-      .configureLogging(signalR.LogLevel.Information)
-      .withAutomaticReconnect()
-      .build();
-    store.commit("changeHubConnection", hubConnection);
+    axios.get("config.json").then((response) => {
+      let url = response.data.serviceGatewaySignalRUrl;
+      console.info("signalr url from config.json - " + url);
 
-    // Starts the SignalR connection
-    hubConnection.start().then((a) => {
-      // Once started, invokes the sendConnectionId in our ChatHub inside our ASP.NET Core application.
-      //if (hubConnection.connectionId) {
-      //  hubConnection.invoke("sendConnectionId", hubConnection.connectionId);
-      //}
-      console.info("Connected.");
-    });
+      const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl(response.data.serviceGatewaySignalRUrl)
+        .configureLogging(signalR.LogLevel.Information)
+        .withAutomaticReconnect()
+        .build();
 
-    interface INotification {
-      corellationId: string;
-      created: string;
-    }
+      store.commit("changeHubConnection", hubConnection);
 
-    let counter = 0;
+      hubConnection.start().then((a) => {
+        console.info("SignalR Connected.");
+      });
 
-    hubConnection.on("nscevents", (message) => {
-      console.info("hubConnection recived message : " + message);
-      var notif: INotification = JSON.parse(message);
-      console.info(
-        "hubConnection recived corellationId : " + notif.corellationId
-      );
-      console.info("hubConnection counter++ : " + counter++);
-      hubConnection.stop();
-      if (store.getters.corellationId === notif.corellationId) {
-        this.$emit("changeExludeGrammar", counter++);
+      interface INotification {
+        corellationId: string;
+        created: string;
       }
+
+      let counter = 0;
+
+      hubConnection.on("nscevents", (message) => {
+        console.info("hubConnection recived message : " + message);
+        var notif: INotification = JSON.parse(message);
+        console.info(
+          "hubConnection recived corellationId : " + notif.corellationId
+        );
+        console.info("hubConnection counter++ : " + counter++);
+        hubConnection.stop();
+        if (store.getters.corellationId === notif.corellationId) {
+          this.$emit("changeExludeGrammar", counter++);
+        }
+      });
     });
   },
 });

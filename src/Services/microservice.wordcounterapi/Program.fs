@@ -1,11 +1,13 @@
 namespace microservice.wordcounterapi
 
 open System.Text.Json
+open System
 
 #nowarn "20"
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
+open microservice.wordcounterapi.ProvidedTypes
 
 module Program =
     let exitCode = 0
@@ -24,6 +26,11 @@ module Program =
         builder.Services
                .AddControllers()
                .AddDapr(fun opt -> opt.UseJsonSerializationOptions(jsonOpt) |> ignore)
+
+        //configuration using FSharp.Data type provider
+        let settingsFile = "appsettings." + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + ".json"
+        let config = AppSettingsProvider.Load(settingsFile)
+        builder.Services.AddSingleton<AppSettings>(config)
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer()

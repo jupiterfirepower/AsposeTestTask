@@ -1,11 +1,20 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+//import config from "../public/config.json";
 
 export default class WordsApiService {
   private axiosInstance: AxiosInstance;
+  private serviceUrl: string;
 
   constructor() {
+    this.serviceUrl = "http://localhost:5241/Gateway";
+    axios.get("config.json").then((config) => {
+      console.info(
+        "config.data.serviceGatewayUrl - " + config.data.serviceGatewayUrl
+      );
+      this.serviceUrl = config.data.serviceGatewayUrl;
+    });
     this.axiosInstance = axios.create({
-      baseURL: "http://localhost:5241/Gateway",
+      baseURL: this.serviceUrl,
     });
   }
 

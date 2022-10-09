@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Services\Types.fs" />
     <Compile Include="State\WebSummaryState.fs" />
     <Compile Include="Controllers\WordSummaryController.fs" />
     <Compile Include="Program.fs" />
@@ -19,6 +20,7 @@
   <ItemGroup>
     <PackageReference Include="Dapr.AspNetCore" Version="1.8.0" />
     <PackageReference Include="FSharp.Control.FusionTasks" Version="2.5.0" />
+    <PackageReference Include="FSharp.Data" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
@@ -29,6 +31,12 @@
     <ProjectReference Include="..\..\Core\Aspose.NLP.Core\Aspose.NLP.Core.csproj" />
     <ProjectReference Include="..\..\Core\Aspose.NLP.FSharp.Core\Aspose.NLP.FSharp.Core.fsproj" />
     <ProjectReference Include="..\..\Shared\microservice.dto.webdata\microservice.dto.webdata.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,7 @@ export default createStore({
       corellationId: "6cd7de5d-819b-4b5b-9bc4-1de54deb8807",
       data: [],
       topn: 5,
+      nTabWords: 3,
       excludeGrammar: false,
       hubConnection: null,
       setupContext: null,
@@ -30,6 +31,9 @@ export default createStore({
     setupContext: (state) => {
       return state.wordCountState.setupContext;
     },
+    nTabWords: (state) => {
+      return state.wordCountState.nTabWords;
+    },
   },
   mutations: {
     changeCorellationId(state, guid) {
@@ -46,11 +50,12 @@ export default createStore({
     },
     changeHubConnection(state, hub) {
       state.wordCountState.hubConnection = hub;
-      //console.info("changeHubConnection excludeGrammar - " + excludeGrammar);
     },
     changeSetupContext(state, context) {
       state.wordCountState.setupContext = context;
-      //console.info("changeHubConnection excludeGrammar - " + excludeGrammar);
+    },
+    changeNTabWords(state, n) {
+      state.wordCountState.nTabWords = n;
     },
     UPDATE_WORD_ITEMS(state, payload) {
       state.wordCountState.data = payload;

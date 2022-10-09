@@ -1,0 +1,5 @@
+{
+    "serviceGatewayUrl": "http://localhost:5241/Gateway",
+    "serviceGatewaySignalRUrl": "http://localhost:5241/notifications-event-hub",
+    "ntabwords": 3
+}

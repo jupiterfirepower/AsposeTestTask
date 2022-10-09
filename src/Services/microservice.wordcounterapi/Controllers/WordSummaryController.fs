@@ -13,10 +13,11 @@ open System.Collections.Generic
 open microservice.wordcounterapi.data
 open Aspose.NLP.FSharp.Core
 open System.Net.Http
+open microservice.wordcounterapi.ProvidedTypes
 
 [<ApiController>]
 [<Route("[controller]")>]
-type WordSummaryController (logger : ILogger<WordSummaryController>) =
+type WordSummaryController (logger : ILogger<WordSummaryController>, settings: AppSettings) =
     inherit ControllerBase()
 
     [<HttpGet>]
@@ -112,8 +113,8 @@ type WordSummaryController (logger : ILogger<WordSummaryController>) =
             notif.Created <- DateTime.UtcNow
 
             let client = new HttpClient()
-
-            let! g = client.PostAsJsonAsync("http://localhost:5241/Gateway/sendnotif", notif);
+            let! g = client.PostAsJsonAsync(settings.Services.GateWayUrl, notif);
+            
             let! corellationId = g.Content.ReadAsAsync<string>();
             logger.LogInformation((sprintf "Text Word Summary PostAsJsonAsync corellationId - %A" corellationId))
         }
