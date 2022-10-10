@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-//import config from "../public/config.json";
 
 export default class WordsApiService {
   private axiosInstance: AxiosInstance;

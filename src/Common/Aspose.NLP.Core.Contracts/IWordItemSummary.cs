@@ -5,5 +5,6 @@
        public string Word { get; }
        public string Summary { get; }
        public int NWords { get; }
+       public int Count { get; }
     }
 }

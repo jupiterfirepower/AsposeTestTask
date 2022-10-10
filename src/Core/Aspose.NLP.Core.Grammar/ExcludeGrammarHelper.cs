@@ -20,7 +20,9 @@ namespace Aspose.NLP.Core.Grammar
         public async Task<IEnumerable<T>> ExcludeGrammarWords<T>(IEnumerable<T> data) where T : IWordItemSummary
         {
             var grammarWords = await GetGrammarData();
-            return data.Where(x => !grammarWords.Any(w => x.Word.ToLower().Contains(w.ToLower())));
+            return data.AsParallel()
+                   .Where(x => !grammarWords.Any(w => x.Word.ToLower().Contains(w.ToLower())))
+                   .OrderBy(x => -x.Count);
         }
     }
 }

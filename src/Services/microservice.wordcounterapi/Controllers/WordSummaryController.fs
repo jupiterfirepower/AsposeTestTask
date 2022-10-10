@@ -25,14 +25,14 @@ type WordSummaryController (logger : ILogger<WordSummaryController>, settings: A
         logger.LogInformation($"Word Summary get result")
 
         let result = state.Value.Data 
-                     |> Seq.map(fun (word, count, per, n) -> let ws = new WordItemSummary(word, count.ToString() + " " + "(" + (sprintf "%.2f" per) + "%)", n)
+                     |> Seq.map(fun (word, count, per, n) -> let ws = new WordItemSummary(word, count.ToString() + " " + "(" + (sprintf "%.2f" per) + "%)", n, count)
                                                              ws)
            
         result |> Seq.toArray
 
     [<HttpGet("{corellationId}")>]
     member _.Get(corellationId: string, [<FromServices>] daprClient : DaprClient): WordItemSummary[] =
-        logger.LogInformation($"Word Summary get by corellationId: {corellationId}")
+        logger.LogInformation($"Get Word Summary by corellationId: {corellationId}")
         let mutable result: seq<_> = Seq.empty
         task {
             let! state = daprClient.GetStateEntryAsync<WebSummaryState>(StoreNames.WordsSummaryStoreName, corellationId)
@@ -43,7 +43,7 @@ type WordSummaryController (logger : ILogger<WordSummaryController>, settings: A
                result <- state.Value.Data |> Seq.filter (fun (word, count, per, n) -> word.Length <> 0)
                |> Seq.map(fun (word, count, per, n) -> if count = 0 then (word, count + 1, per, n) else (word, count, per, n))
                |> Seq.sortBy (fun (word, count, per, n) -> -count)
-               |> Seq.map(fun (word, count, per, n) -> let ws = new WordItemSummary(word, count.ToString() + " " + "(" + (sprintf "%.2f" per) + "%)", n)
+               |> Seq.map(fun (word, count, per, n) -> let ws = new WordItemSummary(word, count.ToString() + " " + "(" + (sprintf "%.2f" per) + "%)", n, count)
                                                        ws)
         }
         |> Async.AwaitTask

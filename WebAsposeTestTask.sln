@@ -55,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspose.NLP.Core.Tests", "sr
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BA46BE81-372F-4232-8FEF-545676241C45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "microservice.core", "src\Core\microservice.core\microservice.core.csproj", "{4FADC452-4697-4C80-8260-5D13B846B276}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "microservice.core", "src\Core\microservice.core\microservice.core.csproj", "{4FADC452-4697-4C80-8260-5D13B846B276}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,6 +5,11 @@ namespace Aspose.NLP.Core.Text
     public class TextHelper
     {
         // ! " # $ % & ' ( ) * + , - . / : ; ? @ [ \ ] ^ _ ` { | } ~ 
-        private string removePunctuations(string text) => Regex.Replace(text, @"[^\w\d\s]", string.Empty, RegexOptions.Compiled);
+        private static string removePunctuations(string text) => Regex.Replace(text, @"[^\w\d\s]", string.Empty, RegexOptions.Compiled);
+
+        public static string RemovePunctuations(string sentense)
+        {
+            return removePunctuations(sentense);
+        }
     }
 }
