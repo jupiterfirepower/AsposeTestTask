@@ -1,5 +1,5 @@
 #   . .\azureCosmosDbEmulator.ps1
-# $password = "pwd1234567890"
+# $password = "pwdxxxxxxxxxxxxxx"
 # Start-CosmosDbEmulatorForDocker(ConvertTo-SecureString $password -AsPlainText -Force)
 
 using namespace System.ServiceProcess

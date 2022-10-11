@@ -59,8 +59,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "microservice.core", "src\Co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{6B2A3AC5-56F5-4545-A08B-17B5CD600B0E}"
 	ProjectSection(SolutionItems) = preProject
-		azureCosmosDbEmulator.ps1 = azureCosmosDbEmulator.ps1
-		trust_cosmos_db_emulator_crt.sh = trust_cosmos_db_emulator_crt.sh
+		src\scripts\azureCosmosDbEmulator.ps1 = src\scripts\azureCosmosDbEmulator.ps1
+		src\scripts\trust_cosmos_db_emulator_crt.sh = src\scripts\trust_cosmos_db_emulator_crt.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components-redis", "components-redis", "{84A5C6F3-AFA7-458C-8252-1FD24ADFCB15}"
+	ProjectSection(SolutionItems) = preProject
+		components-redis\pubsub.yaml = components-redis\pubsub.yaml
+		components-redis\redis.yaml = components-redis\redis.yaml
+		components-redis\statestore.yaml = components-redis\statestore.yaml
 	EndProjectSection
 EndProject
 Global

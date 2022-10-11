@@ -13,7 +13,7 @@ if [ -n "$1" ]; then
 else
     COSMOS_DB_EMULATOR_PFX="/certificates/cosmosdbemulator.pfx"
 fi
-COSMOS_DB_EMULATOR_PFX_PASSWORD="pwd1234567890"
+COSMOS_DB_EMULATOR_PFX_PASSWORD="pwdxxxxxxxx"
 CERT_TO_TRUST="cosmosdbemulator.crt"
 
 # Generate .crt file if pfx exists

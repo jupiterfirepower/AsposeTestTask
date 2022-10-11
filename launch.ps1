@@ -4,9 +4,21 @@ dapr run --app-id "wordcounter-service" --app-port "5003" --dapr-grpc-port "5003
 #dapr run --app-id "gateway-service" --app-port "5004" --dapr-grpc-port "50040" --dapr-http-port "5040" --components-path "./components" -- dotnet run --project ./src/Services/microservice.gateway/microservice.gateway.csproj --urls="http://+:5004"
 
 
+host.docker.internal
+
+
+$password = "pwd1234567890"
+ConvertTo-SecureString $password -AsPlainText -Force
+
+openssl pkcs12 -in ../certificates/cosmosdbemulator.pfx -clcerts -nokeys -out cosmosdbemulator.crt -passin pass:pwd1234567890
+
+cp cosmosdbemulator.crt /usr/local/share/ca-certificates/
 
 
 
 
 
+cp $CERT_TO_TRUST /usr/local/share/ca-certificates/
 
+
+.\Microsoft.Azure.Cosmos.Emulator.exe /GenCert=host.docker.internal
