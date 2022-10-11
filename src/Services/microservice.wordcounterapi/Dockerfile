@@ -7,10 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["microservice.wordcounterapi/microservice.wordcounterapi.fsproj", "microservice.wordcounterapi/"]
-RUN dotnet restore "microservice.wordcounterapi/microservice.wordcounterapi.fsproj"
+COPY ["src/Services/microservice.wordcounterapi/microservice.wordcounterapi.fsproj", "src/Services/microservice.wordcounterapi/"]
+RUN dotnet restore "src/Services/microservice.wordcounterapi/microservice.wordcounterapi.fsproj"
 COPY . .
-WORKDIR "/src/microservice.wordcounterapi"
+WORKDIR "/src/src/Services//microservice.wordcounterapi"
 RUN dotnet build "microservice.wordcounterapi.fsproj" -c Release -o /app/build
 
 FROM build AS publish

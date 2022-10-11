@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["WebHtmlParserDataApi/WebHtmlParserDataApi.csproj", "WebHtmlParserDataApi/"]
-RUN dotnet restore "WebHtmlParserDataApi/WebHtmlParserDataApi.csproj"
+COPY ["src/Services/microservice.webhtmlparserapi/microservice.webhtmlparserapi.csproj", "src/Services/microservice.webhtmlparserapi/"]
+RUN dotnet restore "src/Services/microservice.webhtmlparserapi/microservice.webhtmlparserapi.csproj"
 COPY . .
-WORKDIR "/src/WebHtmlParserDataApi"
-RUN dotnet build "WebHtmlParserDataApi.csproj" -c Release -o /app/build
+WORKDIR "/src/src/Services/microservice.webhtmlparserapi"
+RUN dotnet build "microservice.webhtmlparserapi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "WebHtmlParserDataApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "microservice.webhtmlparserapi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebHtmlParserDataApi.dll"]
+ENTRYPOINT ["dotnet", "microservice.webhtmlparserapi.dll"]

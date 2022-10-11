@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["microservice.weburlapi/microservice.weburlapi.csproj", "microservice.weburlapi/"]
-RUN dotnet restore "microservice.weburlapi/microservice.weburlapi.csproj"
+COPY ["src/Services/microservice.webdownloaderapi/microservice.webdownloaderapi.csproj", "src/Services/microservice.webdownloaderapi/"]
+RUN dotnet restore "src/Services/microservice.webdownloaderapi/microservice.webdownloaderapi.csproj"
 COPY . .
-WORKDIR "/src/microservice.weburlapi"
-RUN dotnet build "microservice.weburlapi.csproj" -c Release -o /app/build
+WORKDIR "/src/src/Services/microservice.webdownloaderapi"
+RUN dotnet build "microservice.webdownloaderapi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "microservice.weburlapi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "microservice.webdownloaderapi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "microservice.weburlapi.dll"]
+ENTRYPOINT ["dotnet", "microservice.webdownloaderapi.dll"]
